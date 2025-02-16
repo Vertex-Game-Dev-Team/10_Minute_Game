@@ -9,14 +9,16 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-	private int   money;
+	private int				 money;
 
 	[Header("학습 레벨 관련")]
 	[SerializeField]
-	private int[] targetLearningLevelExp;
-	private int   learningLevel;
-	private int   currentlearningLevelExp;
-	private int   maxlearningLevelExp;
+	private LearningDataSO[] learningDataList;
+	[SerializeField]
+	private int[]			 targetLearningLevelExp;
+	private int				 learningLevel;
+	private int				 currentlearningExp;
+	private int				 maxlearningExp;
 	
 	public int Money 
 	{ 
@@ -32,13 +34,31 @@ public class GameManager : Singleton<GameManager>
 	public int LearningLevel
 	{ 
 		get { return learningLevel; }
-		set
-		{
-			learningLevel = value;
-
-			if(learningLevel < 0)
-				learningLevel = 0;
-		}
 	}
 
+	private void Start()
+	{
+		// 최대 경험치 설정하기
+		maxlearningExp = targetLearningLevelExp[learningLevel + 1];	
+	}
+
+	public LearningDataSO GetLearningData()
+	{
+		return learningDataList[learningLevel];
+	}
+
+	public void GetExp(int exp)
+	{
+		if(learningLevel >= learningDataList.Length)
+			return;
+
+		currentlearningExp += exp;
+		
+		 if(currentlearningExp >= maxlearningExp)
+		{
+			learningLevel++;
+			currentlearningExp = 0;
+            maxlearningExp     = targetLearningLevelExp[learningLevel + 1];
+		}
+	}
 }
